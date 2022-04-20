@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "npx nodemon src/index.js"
+    "dev": "npx nodemon src/index.ts"
   },
   "author": "",
   "license": "ISC",
