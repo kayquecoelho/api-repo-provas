@@ -9,6 +9,9 @@ export async function signUp(req: Request, res: Response) {
 }
 
 export async function login(req: Request, res: Response) {
+  const { email, password } = req.body;
 
-  res.sendStatus(201);
+  const token = await authController.login(email, password);
+
+  res.send({ token });
 }

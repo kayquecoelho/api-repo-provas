@@ -19,7 +19,16 @@ async function findByEmail(email: string) {
   return user;  
 }
 
+async function findById(id: number) {
+  const user = await connection.user.findUnique({
+    where: { id }
+  });
+
+  return user;  
+}
+
 export default {
   create, 
-  findByEmail
+  findByEmail,
+  findById
 }
