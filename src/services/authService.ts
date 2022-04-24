@@ -31,6 +31,8 @@ export async function login(email: string, password: string) {
 }
 
 export async function validateToken(token: string) {
+  if (typeof token !== 'string') throw errors.unauthorized("token");
+
   const { sessionId } = jwtService.validateToken(token);
 
   const session = await sessionRepository.findById(sessionId);
