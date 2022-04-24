@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from "express";
+import { JsonWebTokenError } from "jsonwebtoken";
 import { CustomizedError } from "../errors/errors.js";
 
 export default function errorHandler(
-  error: Error | CustomizedError,
+  error: Error | CustomizedError | JsonWebTokenError,
   req: Request,
   res: Response,
   next: NextFunction
@@ -18,6 +19,13 @@ export default function errorHandler(
       return res.status(409).send(error.message);
     }
     if (error.type === "error_unprocessable_entity") {
+      return res.status(422).send(error.message);
+    }
+  } else if ("name" in error) {
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).send(error.message);
+    }
+    if (error.name === "JsonWebTokenError") {
       return res.status(422).send(error.message);
     }
   }
