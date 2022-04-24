@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 
 import * as authController from "../services/authService.js";
+import { connection } from "../connection.js";
 
-export async function signUp(req: Request, res: Response) {  
+export async function signUp(req: Request, res: Response) {
   await authController.createUser(req.body);
 
   res.sendStatus(201);
