@@ -22,7 +22,8 @@ export async function findAll() {
               id: true,
               name: true,
               pdfUrl: true,
-              category: true
+              category: true,
+              viewsCount: true
             }
           }
         }
