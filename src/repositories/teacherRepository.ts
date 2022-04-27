@@ -15,6 +15,9 @@ export async function findAll() {
             }
           },
           tests: {
+            orderBy: {
+              id: 'asc'
+            },
             select: {
               id: true,
               name: true,

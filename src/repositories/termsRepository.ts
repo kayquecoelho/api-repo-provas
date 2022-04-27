@@ -17,9 +17,14 @@ export default async function findTerms(){
                 },
               },
               tests: {
+                orderBy: {
+                  id: 'asc'
+                },
                 select: {
+                  id: true,
                   name: true,
                   pdfUrl: true,
+                  viewsCount: true,
                   category: {
                     select: {
                       id: true,
