@@ -34,4 +34,18 @@ async function findAll() {
   return teachers;
 }
 
-export default { findAll };
+async function findByDiscipline(disciplineId: number) {
+  const result = prisma.teacher.findMany({
+    where: {
+      disciplineTeacher: {
+        some: {
+          disciplineId
+        }
+      }
+    },
+  });
+  
+  return result;
+}
+
+export default { findAll, findByDiscipline};
