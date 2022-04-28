@@ -1,7 +1,7 @@
-import { connection } from "../connection.js";
+import { prisma } from "../connection.js";
 
 export default async function findTerms(){
-  const data = await connection.term.findMany({
+  const data = await prisma.term.findMany({
     select: {
       number: true,
       id: true,

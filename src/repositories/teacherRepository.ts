@@ -1,7 +1,7 @@
-import { connection } from "../connection.js";
+import { prisma } from "../connection.js";
 
 export async function findAll() {
-  const teachers = await connection.teacher.findMany({
+  const teachers = await prisma.teacher.findMany({
     select: {
       id: true,
       name: true,

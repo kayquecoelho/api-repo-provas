@@ -1,7 +1,7 @@
-import { connection } from "../connection.js";
+import { prisma } from "../connection.js";
 
 async function increaseViewsCount(testId: number) {
-  return connection.test.update({
+  return prisma.test.update({
     where: {
       id: testId,
     },
@@ -14,7 +14,7 @@ async function increaseViewsCount(testId: number) {
 }
 
 async function findById(testId: number) {
-  const test = connection.test.findUnique({
+  const test = prisma.test.findUnique({
     where: {
       id: testId,
     },

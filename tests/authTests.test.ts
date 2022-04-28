@@ -1,6 +1,6 @@
 import supertest from "supertest";
-import app from "../src/index.js";
-import { connection } from "../src/connection.js";
+import app from "../src/app.js";
+import { prisma } from "../src/connection.js";
 import dotenv from "dotenv";
 import userFactory from "./authFactory/userFactory.js";
 import userDataFactory from "./authFactory/userDataFactory.js";
@@ -8,10 +8,10 @@ dotenv.config();
 
 describe("POST /auth/sign-up", () => {
   beforeEach(
-    async () => await connection.$executeRaw`TRUNCATE TABLE users CASCADE;`
+    async () => await prisma.$executeRaw`TRUNCATE TABLE users CASCADE;`
   );
   afterAll(async () => {
-    await connection.$disconnect();
+    await prisma.$disconnect();
   });
 
   it("should return status 422 given a empty body", async () => {
@@ -25,7 +25,7 @@ describe("POST /auth/sign-up", () => {
 
     const response = await supertest(app).post("/auth/sign-up").send(userData);
 
-    const user = await connection.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { email: userData.email },
     });
 
@@ -39,7 +39,7 @@ describe("POST /auth/sign-up", () => {
     await supertest(app).post("/auth/sign-up").send(userData);
     const response = await supertest(app).post("/auth/sign-up").send(userData);
 
-    const user = await connection.user.findMany({
+    const user = await prisma.user.findMany({
       where: { email: userData.email },
     });
 
@@ -50,10 +50,10 @@ describe("POST /auth/sign-up", () => {
 
 describe("POST /auth/login", () => {
   beforeEach(
-    async () => await connection.$executeRaw`TRUNCATE TABLE users CASCADE;`
+    async () => await prisma.$executeRaw`TRUNCATE TABLE users CASCADE;`
   );
   afterAll(async () => {
-    await connection.$disconnect();
+    await prisma.$disconnect();
   });
 
   it("should return 422 given a empty body", async () => {

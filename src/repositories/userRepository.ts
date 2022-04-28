@@ -1,4 +1,4 @@
-import { connection } from "../connection.js";
+import { prisma } from "../connection.js";
 
 export interface CreateUserData {
   email: string;
@@ -6,13 +6,13 @@ export interface CreateUserData {
 }
 
 async function create(user: CreateUserData) {
-  return await connection.user.create({
+  return await prisma.user.create({
     data: user
   });
 }
 
 async function findByEmail(email: string) {
-  const user = await connection.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { email }
   });
 
@@ -20,7 +20,7 @@ async function findByEmail(email: string) {
 }
 
 async function findById(id: number) {
-  const user = await connection.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { id }
   });
 
