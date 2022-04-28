@@ -4,6 +4,6 @@ import validateTokenMiddleware from "../middlewares/validateTokenMiddleware.js";
 
 const termRouter = Router();
 
-termRouter.get("/terms", validateTokenMiddleware, termController.getTerms);
+termRouter.get("/", validateTokenMiddleware, termController.getTerms);
 
 export default termRouter;

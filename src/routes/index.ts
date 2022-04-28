@@ -1,14 +1,16 @@
 import { Router } from "express";
 import authRouter from "./authRouter.js";
+import categoryRouter from "./categoryRouter.js";
 import teacherRouter from "./teacherRouter.js";
 import termRouter from "./termRouter.js";
 import testRouter from "./testsRouter.js";
 
 const router = Router();
 
-router.use(authRouter);
-router.use(termRouter);
-router.use(teacherRouter);
-router.use(testRouter);
+router.use("/auth", authRouter);
+router.use("/terms", termRouter);
+router.use("/teachers", teacherRouter);
+router.use("/tests", testRouter);
+router.use("/categories", categoryRouter);
 
 export default router;
