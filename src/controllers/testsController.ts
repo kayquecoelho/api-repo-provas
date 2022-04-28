@@ -10,3 +10,16 @@ export async function increaseViewsCount(req: Request, res: Response) {
   
   res.sendStatus(200);
 }
+
+export async function getTests(req: Request, res: Response) {
+  const { groupedBy } = req.query;
+
+  if (groupedBy !== "teachers" && groupedBy !== "terms"){
+    return res.sendStatus(422);
+  }
+
+  const tests = await testService.getFilteredTests(groupedBy);
+
+  res.send(tests);
+}
+

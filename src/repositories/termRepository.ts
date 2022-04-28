@@ -1,6 +1,6 @@
 import { prisma } from "../connection.js";
 
-export default async function findTerms(){
+async function findAll(){
   const data = await prisma.term.findMany({
     select: {
       number: true,
@@ -44,3 +44,5 @@ export default async function findTerms(){
   });
   return data;
 }
+
+export default { findAll };

@@ -4,6 +4,8 @@ import * as testController from "../controllers/testsController.js";
 
 const testRouter = Router();
 
-testRouter.put("/:id/view", validateTokenMiddleware, testController.increaseViewsCount);
+testRouter.use(validateTokenMiddleware);
+testRouter.put("/:id/view", testController.increaseViewsCount);
+testRouter.get("/", testController.getTests);
 
 export default testRouter;

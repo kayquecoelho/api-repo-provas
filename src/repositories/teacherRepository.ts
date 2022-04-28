@@ -1,6 +1,6 @@
 import { prisma } from "../connection.js";
 
-export async function findAll() {
+async function findAll() {
   const teachers = await prisma.teacher.findMany({
     select: {
       id: true,
@@ -9,27 +9,29 @@ export async function findAll() {
         select: {
           discipline: {
             select: {
-              id: true, 
+              id: true,
               name: true,
-              term: true
-            }
+              term: true,
+            },
           },
           tests: {
             orderBy: {
-              id: 'asc'
+              id: "asc",
             },
             select: {
               id: true,
               name: true,
               pdfUrl: true,
               category: true,
-              viewsCount: true
-            }
-          }
-        }
-      }
-    }
+              viewsCount: true,
+            },
+          },
+        },
+      },
+    },
   });
-  
+
   return teachers;
 }
+
+export default { findAll };
