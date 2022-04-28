@@ -1,9 +1,9 @@
 import { Router } from "express";
-import getCategories from "../controllers/categoryController.js";
+import getDisciplines from "../controllers/disciplineController.js";
 import validateTokenMiddleware from "../middlewares/validateTokenMiddleware.js";
 
 const disciplineRouter = Router();
 
-disciplineRouter.get("/", validateTokenMiddleware, getCategories);
+disciplineRouter.get("/", validateTokenMiddleware, getDisciplines);
 
 export default disciplineRouter;
