@@ -18,3 +18,7 @@ export function notFound(entity: string): CustomizedError {
 export function conflict(entity: string): CustomizedError {
   return { type: "error_conflict", message: `${entity} already exists!`};
 }
+
+export function badRequest(message: string): CustomizedError {
+  return { type: "error_bad_request", message };
+}
