@@ -6,4 +6,14 @@ async function findAll() {
   return categories;
 }
 
-export default { findAll };
+async function findById(categoryId: number) {
+  const category = await prisma.category.findUnique({
+    where: {
+      id: categoryId
+    }
+  });
+
+  return category;
+}
+
+export default { findAll, findById };

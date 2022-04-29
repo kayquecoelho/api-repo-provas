@@ -1,5 +1,6 @@
 import { Response, Request } from "express";
-import * as testService from "../services/testService.js";
+import { TestData } from "../schemas/testSchema.js";
+import testService from "../services/testService.js";
 
 export async function increaseViewsCount(req: Request, res: Response) {
   const testId = Number(req.params.id);
@@ -21,5 +22,13 @@ export async function getTests(req: Request, res: Response) {
   const tests = await testService.getFilteredTests(groupedBy);
 
   res.send(tests);
+}
+
+export async function createTest(req: Request, res: Response) {
+  const testData = <TestData>req.body;
+
+  await testService.createTest(testData);
+
+  res.sendStatus(201);
 }
 
