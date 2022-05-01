@@ -7,12 +7,9 @@ import userDataFactory from "./authFactory/userDataFactory.js";
 dotenv.config();
 
 describe("POST /auth/sign-up", () => {
-  beforeEach(
-    async () => await prisma.$executeRaw`TRUNCATE TABLE users CASCADE;`
-  );
-  afterAll(async () => {
-    await prisma.$disconnect();
-  });
+  beforeEach(truncateUsersTable());
+
+  afterAll(disconnectDatabase());
 
   it("should return status 422 given a empty body", async () => {
     const response = await supertest(app).post("/auth/sign-up");
@@ -49,12 +46,9 @@ describe("POST /auth/sign-up", () => {
 });
 
 describe("POST /auth/login", () => {
-  beforeEach(
-    async () => await prisma.$executeRaw`TRUNCATE TABLE users CASCADE;`
-  );
-  afterAll(async () => {
-    await prisma.$disconnect();
-  });
+  beforeEach(truncateUsersTable());
+
+  afterAll(disconnectDatabase());
 
   it("should return 422 given a empty body", async () => {
     const response = await supertest(app).post("/auth/login");
@@ -77,8 +71,28 @@ describe("POST /auth/login", () => {
 
     await userFactory(userData);
 
-    const response = await supertest(app).post("/auth/login").send({...userData, password: '123'});
+    const response = await supertest(app)
+      .post("/auth/login")
+      .send({ ...userData, password: "123" });
 
     expect(response.status).toEqual(401);
   });
 });
+
+describe("POST /tests", () => {
+  it.todo("should return status 401 given a invalid token",);
+
+  it.todo("should return status 422 given an invalid body");
+
+  it.todo("should return status 400 given invalid data");
+
+  it.todo("should return status 201 given a valid body and persist test");
+});
+
+async function truncateUsersTable() {
+  return await prisma.$executeRaw`TRUNCATE TABLE users CASCADE;`;
+}
+
+async function disconnectDatabase() {
+  return await prisma.$disconnect();
+}
