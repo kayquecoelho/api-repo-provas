@@ -4,8 +4,8 @@ import { prisma } from "../src/connection.js";
 import dotenv from "dotenv";
 import userFactory from "./authFactory/userFactory.js";
 import userDataFactory from "./authFactory/userDataFactory.js";
-import { gunzip } from "zlib";
 import { TestData } from "../src/schemas/testSchema.js";
+import testFactory from "./testFactory/testFactory.js";
 dotenv.config();
 
 describe("POST /auth/sign-up", () => {
@@ -83,6 +83,7 @@ describe("POST /auth/login", () => {
 
 describe("POST /tests", () => {
   beforeEach(truncateUsersTable);
+  beforeEach(truncateTestsTable);
 
   afterAll(disconnectDatabase);
 
@@ -93,46 +94,54 @@ describe("POST /tests", () => {
   });
 
   it("should return status 422 given a valid token and an invalid body", async () => {
-    const token = await login();
+    const token = await tokenFactory();
 
-    const response = await supertest(app).post("/tests").set("Authorization", token);
+    const response = await supertest(app)
+      .post("/tests")
+      .set("Authorization", token);
 
     expect(response.status).toEqual(422);
   });
-  
+
   it("should return status 400 given a valid body with invalid data", async () => {
-    const token = await login();
-    
+    const token = await tokenFactory();
+
     const testData: TestData = {
       name: "2022 - First Attempt",
       pdfUrl: "http://www.google.com",
       disciplineId: 25,
       teacherId: 25,
-      categoryId: 15
-    }
-    
-    const response = await supertest(app).post("/tests").send(testData).set("Authorization", token);
-    
+      categoryId: 15,
+    };
+
+    const response = await supertest(app)
+      .post("/tests")
+      .send(testData)
+      .set("Authorization", token);
+
     expect(response.status).toEqual(400);
   });
-  
+
   it("should return status 201 given a valid body and persist test", async () => {
-    const token = await login();
-    
+    const token = await tokenFactory();
+
     const testData: TestData = {
       name: "2022 - First Attempt",
       pdfUrl: "http://www.google.com",
       disciplineId: 2,
       teacherId: 2,
-      categoryId: 1
-    }
+      categoryId: 1,
+    };
 
-    const response = await supertest(app).post("/tests").send(testData).set("Authorization", token);
-    
+    const response = await supertest(app)
+      .post("/tests")
+      .send(testData)
+      .set("Authorization", token);
+
     const test = await prisma.test.findFirst({
       where: {
-        name: "2022 - First Attempt"
-      }
+        name: "2022 - First Attempt",
+      },
     });
 
     expect(response.status).toEqual(201);
@@ -140,14 +149,64 @@ describe("POST /tests", () => {
   });
 });
 
-async function login(){
-  const user = userDataFactory();
+describe("PATCH /tests/:id/view", () => {
+  beforeEach(truncateTestsTable);
+  beforeEach(truncateUsersTable);
+
+  afterAll(disconnectDatabase);
+
+  it("should return status 401 without authorization headers", async () => {
+    const response = await supertest(app).patch(`/tests/1/view`);
+
+    expect(response.status).toEqual(401);
+  });
+
+  it("should return status 400 given a valid authorization and an invalid id", async () => {
+    const token = await tokenFactory();
+
+    const response = await supertest(app).put("/tests/aaa/view").set("Authorization", token);
+
+    expect(response.status).toEqual(400);
+  });
   
+  it("should return status 404 given a non-existent id", async () => {
+    const token = await tokenFactory();
+
+    const response = await supertest(app).put("/tests/1/view").set("Authorization", token);
+
+    expect(response.status).toEqual(404);
+  });
+
+  it("should return status 200 and increase the amount of views given a valid test id", async () => {
+    const test = await testFactory();
+
+    const token = await tokenFactory();
+
+    const response = await supertest(app).put(`/tests/${test.id}/view`).set("Authorization", token);
+
+    const modifiedTest = await prisma.test.findUnique({
+      where: {
+        id: test.id
+      }
+    });
+
+    expect(response.status).toEqual(200);
+    expect(modifiedTest?.viewsCount).toEqual(test.viewsCount + 1);
+  });
+});
+
+async function tokenFactory() {
+  const user = userDataFactory();
+
   await userFactory(user);
 
   const response = await supertest(app).post("/auth/login").send(user);
 
   return response.body.token;
+}
+
+async function truncateTestsTable() {
+  return await prisma.$executeRaw`TRUNCATE TABLE tests RESTART IDENTITY;`;
 }
 
 async function truncateUsersTable() {
