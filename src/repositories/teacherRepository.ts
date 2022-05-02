@@ -15,9 +15,7 @@ async function findAll() {
             },
           },
           tests: {
-            orderBy: {
-              id: "asc",
-            },
+            orderBy: [{ categoryId: "asc" }, { viewsCount: "desc" }],
             select: {
               id: true,
               name: true,
@@ -29,6 +27,7 @@ async function findAll() {
         },
       },
     },
+    orderBy: { name: "asc" }
   });
 
   return teachers;

@@ -1,6 +1,6 @@
 import { prisma } from "../connection.js";
 
-async function findAll(){
+async function findAll() {
   const data = await prisma.term.findMany({
     select: {
       number: true,
@@ -17,9 +17,7 @@ async function findAll(){
                 },
               },
               tests: {
-                orderBy: {
-                  id: 'asc'
-                },
+                orderBy: [{ categoryId: "asc" }, { viewsCount: "desc" }],
                 select: {
                   id: true,
                   name: true,
@@ -39,7 +37,7 @@ async function findAll(){
       },
     },
     orderBy: {
-      id: "asc",
+      number: "asc",
     },
   });
   return data;
