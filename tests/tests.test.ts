@@ -164,15 +164,19 @@ describe("PATCH /tests/:id/view", () => {
   it("should return status 400 given a valid authorization and an invalid id", async () => {
     const token = await tokenFactory();
 
-    const response = await supertest(app).put("/tests/aaa/view").set("Authorization", token);
+    const response = await supertest(app)
+      .put("/tests/aaa/view")
+      .set("Authorization", token);
 
     expect(response.status).toEqual(400);
   });
-  
+
   it("should return status 404 given a non-existent id", async () => {
     const token = await tokenFactory();
 
-    const response = await supertest(app).put("/tests/1/view").set("Authorization", token);
+    const response = await supertest(app)
+      .put("/tests/1/view")
+      .set("Authorization", token);
 
     expect(response.status).toEqual(404);
   });
@@ -182,16 +186,50 @@ describe("PATCH /tests/:id/view", () => {
 
     const token = await tokenFactory();
 
-    const response = await supertest(app).put(`/tests/${test.id}/view`).set("Authorization", token);
+    const response = await supertest(app)
+      .put(`/tests/${test.id}/view`)
+      .set("Authorization", token);
 
     const modifiedTest = await prisma.test.findUnique({
       where: {
-        id: test.id
-      }
+        id: test.id,
+      },
     });
 
     expect(response.status).toEqual(200);
     expect(modifiedTest?.viewsCount).toEqual(test.viewsCount + 1);
+  });
+});
+
+describe("GET /tests", () => {
+  beforeEach(truncateUsersTable);
+  afterAll(disconnectDatabase);
+
+  it("should return status 401 without authorization headers", async () => {
+    const response = await supertest(app).get(`/tests`);
+
+    expect(response.status).toEqual(401);
+  });
+
+  it("should return status 422 without mandatory query 'groupedBy'", async () => {
+    const token = await tokenFactory();
+
+    const response = await supertest(app)
+      .get(`/tests`)
+      .set("Authorization", token);
+
+    expect(response.status).toEqual(422);
+  });
+
+  it("should return status 200 and an array given whether 'teachers' or 'terms' as query param", async () => {
+    const token = await tokenFactory();
+
+    const response = await supertest(app)
+      .get(`/tests?groupedBy=teachers`)
+      .set("Authorization", token);
+
+    expect(response.status).toEqual(200);
+    expect(response.body.length).toBeGreaterThanOrEqual(0);
   });
 });
 
