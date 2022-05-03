@@ -245,19 +245,67 @@ describe("GET /categories", () => {
 
   it("should return status 200 and an array of categories", async () => {
     const token = await tokenFactory();
-    const schema = [
-      {
-        id: "1",
-        name: "P1",
-      },
-    ];
 
     const response = await supertest(app)
       .get(`/categories`)
       .set("Authorization", token);
 
     expect(response.status).toEqual(200);
-    expect(response.body).toBe(expect.arrayContaining(schema));
+    expect(response.body.length).toBeGreaterThanOrEqual(0);
+  });
+});
+
+describe("GET /disciplines", () => {
+  beforeEach(truncateUsersTable);
+  afterAll(disconnectDatabase);
+
+  it("should return status 401 without authorization headers", async () => {
+    const response = await supertest(app).get(`/disciplines`);
+
+    expect(response.status).toEqual(401);
+  });
+
+  it("should return status 200 and an array of disciplines", async () => {
+    const token = await tokenFactory();
+
+    const response = await supertest(app)
+      .get(`/disciplines`)
+      .set("Authorization", token);
+
+    expect(response.status).toEqual(200);
+    expect(response.body.length).toBeGreaterThanOrEqual(0);
+  });
+});
+
+describe("GET /teachers", () => {
+  beforeEach(truncateUsersTable);
+  afterAll(disconnectDatabase);
+
+  it("should return status 401 without authorization headers", async () => {
+    const response = await supertest(app).get(`/teachers`);
+
+    expect(response.status).toEqual(401);
+  });
+
+  it("should return status 400 given a request without mandatory query param 'disciplineId' ", async () => {
+    const token = await tokenFactory();
+
+    const response = await supertest(app)
+      .get(`/teachers`)
+      .set("Authorization", token);
+
+    expect(response.status).toEqual(400);
+  });
+
+  it("should return status 200 given a request with mandatory query param 'disciplineId' ", async () => {
+    const token = await tokenFactory();
+
+    const response = await supertest(app)
+      .get(`/teachers?disciplineId=1`)
+      .set("Authorization", token);
+
+    expect(response.status).toEqual(200);
+    expect(response.body.length).toBeGreaterThanOrEqual(0);
   });
 });
 
