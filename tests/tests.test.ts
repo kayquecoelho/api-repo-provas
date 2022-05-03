@@ -233,6 +233,34 @@ describe("GET /tests", () => {
   });
 });
 
+describe("GET /categories", () => {
+  beforeEach(truncateUsersTable);
+  afterAll(disconnectDatabase);
+
+  it("should return status 401 without authorization headers", async () => {
+    const response = await supertest(app).get(`/categories`);
+
+    expect(response.status).toEqual(401);
+  });
+
+  it("should return status 200 and an array of categories", async () => {
+    const token = await tokenFactory();
+    const schema = [
+      {
+        id: "1",
+        name: "P1",
+      },
+    ];
+
+    const response = await supertest(app)
+      .get(`/categories`)
+      .set("Authorization", token);
+
+    expect(response.status).toEqual(200);
+    expect(response.body).toBe(expect.arrayContaining(schema));
+  });
+});
+
 async function tokenFactory() {
   const user = userDataFactory();
 

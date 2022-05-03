@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "npx nodemon src/server.ts",
-    "test": "NODE_OPTIONS=--experimental-vm-modules dotenv -e .env.test jest -i"
+    "test": "NODE_OPTIONS=--experimental-vm-modules dotenv -e .env.test jest -i",
+    "seed:test": "npx dotenv -e .env.test prisma db seed"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
